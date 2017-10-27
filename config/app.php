@@ -163,6 +163,9 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        ///krlove eloquent model generator
+        Krlove\EloquentModelGenerator\Provider\GeneratorServiceProvider::class,
+
         /*
          * Package Service Providers...
          */
