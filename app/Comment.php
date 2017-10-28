@@ -22,4 +22,12 @@ class Comment extends Model
      */
     protected $fillable = ['user_id', 'user_img', 'status', 'post_id', 'comment_body', 'date', 'answer', 'target_id'];
 
+
+public function post(){
+    return $this->belongsTo('App\Post','post_id','id');//the second argument is the local and the second is foreign i stil wonder if
+    //it is the same on hasMany relationship or not
+}
+public function user(){
+    return $this->belongsTo('App\User','user_id','id');
+}
 }

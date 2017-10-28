@@ -20,5 +20,10 @@ class Post extends Model
      * @var array
      */
     protected $fillable = ['title', 'text', 'time', 'cat_id', 'views', 'likes', 'img'];
-
+public function comments(){
+    return $this->hasMany('App\Comment');
+}
+public function post_cats(){
+    return $this->belongsTo('App\PostCat','cat_id','id');
+}
 }
