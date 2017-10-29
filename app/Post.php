@@ -20,6 +20,7 @@ class Post extends Model
      * @var array
      */
     protected $fillable = ['title', 'text', 'time', 'cat_id', 'views', 'likes', 'img'];
+    public $timestamps=false;
 public function comments(){
     return $this->hasMany('App\Comment');
 }

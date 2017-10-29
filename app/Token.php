@@ -16,5 +16,7 @@ class Token extends Model
      * @var array
      */
     protected $fillable = ['token', 'user_id', 'time'];
-
+public function user(){
+    return $this->belongsTo('App\User','user_id','id');
+}
 }
