@@ -27,5 +27,6 @@ class TestProvider extends ServiceProvider
         $this->app->bind(TestService::class,function ($app){
             return new TestService();
         });
+        $this->app->bind('ErrorGen','App\Services\ErrorGenerator');
     }
 }

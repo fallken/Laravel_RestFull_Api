@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\TestService;
 use App\Token;
 use App\User;
+use Hamcrest\Thingy;
 use Illuminate\Http\Request;
 
 class Test extends Controller
@@ -19,13 +20,15 @@ class Test extends Controller
     }
 
     public function index(){
-        try{
+
             $parms=request()->input();
             $data=$this->test->getPost($parms['id']);
-            return response()->json(['ok'=>true,'result'=>$data],200);
-        }catch (Exception $e){
-            return response()->json(['ok'=>false,'message'=>'error happened during trying to get information from database'],500);
-        }
+            if ($data) {
+                return $this->jsonify(1,$data,0);
+            }
+            else {
+                return $this->jsonify(0,0,3);
+            }
 
     }
     public function like(){
@@ -62,12 +65,12 @@ class Test extends Controller
 ////        $user=Token::find($tokenId)->user;
 //
 //        return response()->json($tokenId);
-        $parms=[];
-        $parms=request()->input();
-        $tokenId= User::where('id',$parms['id'])->first();
+//        $parms=[];
+//        $parms=request()->input();
+//        $tokenId= User::where('id',$parms['id'])->first();
 //        $user=Token::find($tokenId)->user;
-
-        return response()->json($tokenId->username);
+        $err= app('ErrorGen');
+        return response()->json($err->index());
     }
     public function getComments(){//ill work on its security later not now . for now i will just define the functions and take tests from them
         try{
@@ -80,16 +83,37 @@ class Test extends Controller
         }
 
     }
-    protected function addComment(){
+    public function addComment(){
         $parms=[];
         $parms=request()->input();
         $targetId=isset($parms['target_id'])?$parms['target_id']:0;
         $data=$this->test->addComment($parms['user_id'],$parms['post_id'],$parms['comment_body'],$targetId);
         return response()->json(['ok'=>true,'comments'=>$data]);
 }
-    protected function jsonify($data){
-        //a function to create better structured json response
+    public function Search(){//i think i should be using ordinary strucrured data errors like the one used on
+        //need to create another service container for handling errors and requests
+        ///or ill pass the data and the error name to jsonifier and then the jsonifier will use the sevice container to get the error data and the will retun the error structure to me
+        $parms=[];
+        $parms=request()->input();
+        $parms['word']=urldecode($parms['word']);
+        $parms['word']=urlencode($parms['word']);
+        $word=isset($parms['word'])?$parms['word']:null;
+        $posts=$this->test->searchPost($word);
+            //count the number of comments
+        if ($posts){
+            return  response()->json(['ok'=>true,'result'=>$posts]);
+        }
+            else{
+                return  response()->json(['ok'=>false,'result'=>'the'],27);//this->errorLoger(27);
+        }
 
+
+    }
+
+    protected function jsonify($stat=0,$data=0,$errNo=null){
+        //a function to create better structured json response
+        $err= app('ErrorGen');
+        return $err->errorMaker($stat,$data,$errNo);
 
     }
 
