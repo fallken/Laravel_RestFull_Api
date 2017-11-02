@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\TestService;
 use App\Token;
 use App\User;
+use App\Post;
 use Hamcrest\Thingy;
 use Illuminate\Http\Request;
 
@@ -23,64 +24,66 @@ class Test extends Controller
 
             $parms=request()->input();
             $data=$this->test->getPost($parms['id']);
+
             if ($data) {
                 return $this->jsonify(1,$data,0);
             }
             else {
-                return $this->jsonify(0,0,3);
+                return $this->jsonify(0,0,1);
             }
 
     }
     public function like(){
-        try{
             $parms=request()->input();
         $likes=$this->test->addLike($parms['id']);
-        return response()->json(['ok'=>true,'likes'=>$likes]);}
-        catch (Exception $e){
-        return response()->json(['ok'=>false,'message'=>'error happened during trying to get information from database'],500);
+        if ($likes){
+            return $this->jsonify(1,$likes,0);
+        }
+        else {
+            return $this->jsonify(0,0,3);
         }
 
     }
     public function disLike(){
-        try{
+
             $parms=request()->input();
             $likes=$this->test->disLike($parms['id']);
-            return response()->json(['ok'=>true,'likes'=>$likes]);}
-        catch (Exception $e){
-            return response()->json(['ok'=>false,'message'=>'error happened during trying to get information from database'],500);
-        }
+            if ($likes){
+                return $this->jsonify(1,$likes,0);
+            }
+        else{
+            return $this->jsonify(0,0,3);
+            }
     }
     public function cats(){
-        try{
+
             $cats=$this->test->cats();
-            return response()->json(['ok'=>true,'likes'=>$cats]);}
-        catch (Exception $e){
-            return response()->json(['ok'=>false,'message'=>'error happened during trying to get information from database'],500);
-        }
+            if ($cats) {
+                return $this->jsonify(1, $cats, 0);
+            }
+            else{
+                return $this->jsonify(0, 0, 3);
+            }
+
     }
     public function test(){
-//        $parms=[];
-//        $parms=request()->input();
-//        $tokenId= Token::where('token',$parms['token'])->get();
-////        $user=Token::find($tokenId)->user;
-//
-//        return response()->json($tokenId);
-//        $parms=[];
-//        $parms=request()->input();
-//        $tokenId= User::where('id',$parms['id'])->first();
-//        $user=Token::find($tokenId)->user;
-        $err= app('ErrorGen');
-        return response()->json($err->index());
+        $parms=request()->input();
+        $postId=$parms['postId'];
+        return response()->json($this->test->getCommentsNum($postId));
+
     }
     public function getComments(){//ill work on its security later not now . for now i will just define the functions and take tests from them
-        try{
+
             $parms=[];
             $parms=request()->input();
             $data=$this->test->getComments($parms['id'],$parms['offset']);
-            return response()->json(['ok'=>true,'comments'=>$data]);}
-        catch (Exception $e){
-            return response()->json(['ok'=>false,'message'=>'error happened during trying to get information from database'],500);
-        }
+            if ($data){
+                return $this->jsonify(1, $data, 0);
+            }
+            else{
+                return $this->jsonify(0, 0, 1);
+            }
+
 
     }
     public function addComment(){
@@ -88,31 +91,66 @@ class Test extends Controller
         $parms=request()->input();
         $targetId=isset($parms['target_id'])?$parms['target_id']:0;
         $data=$this->test->addComment($parms['user_id'],$parms['post_id'],$parms['comment_body'],$targetId);
-        return response()->json(['ok'=>true,'comments'=>$data]);
+        if ($data){
+            $this->jsonify(1,$data,0);
+        }
+        else{
+            $this->jsonify(0,0,3);
+        }
 }
     public function Search(){//i think i should be using ordinary strucrured data errors like the one used on
         //need to create another service container for handling errors and requests
         ///or ill pass the data and the error name to jsonifier and then the jsonifier will use the sevice container to get the error data and the will retun the error structure to me
+        //i will add the offset section later.its fine
         $parms=[];
         $parms=request()->input();
-        $parms['word']=urldecode($parms['word']);
-        $parms['word']=urlencode($parms['word']);
         $word=isset($parms['word'])?$parms['word']:null;
-        $posts=$this->test->searchPost($word);
-            //count the number of comments
-        if ($posts){
-            return  response()->json(['ok'=>true,'result'=>$posts]);
-        }
-            else{
-                return  response()->json(['ok'=>false,'result'=>'the'],27);//this->errorLoger(27);
-        }
+        if (!is_null($word)){
+            if (strlen($word)>=4){ //count the number of comments
+                $posts = $this->test->searchPost($word);
 
-
+                if ($posts) {
+                    for ($i=0;$i<count($posts);$i++){
+                        $posts[$i]['comments']=$this->test->getCommentsNum($posts[$i]['id']);
+                    }
+                    return $this->jsonify(1, $posts, 0);
+                } else {
+                    return $this->jsonify(0, 0, 9);
+                }
+            }else{
+                return $this->jsonify(0,0,5);
+            }
+        }
+        return $this->jsonify(0,0,8);
     }
-
+    public function TopNewPosts(){//in close future i will also add the check if the cat id exists in the db and will generate responses according to that
+        $parms=[];
+        $parms=request()->input();
+        $catId=null;
+        $catId=(isset($parms['CatId'])&&is_numeric($parms['CatId'])&&!empty($parms['CatId']))?$parms['CatId']:null;
+        $posts=$this->test->TopNewPosts($catId);
+        for ($i=0;$i<count($posts);$i++){
+            $posts[$i]['comments']=$this->test->getCommentsNum($posts[$i]['post_id']);
+        }
+        if ($posts){
+            return $this->jsonify(1,$posts,0);
+        }else
+            return $this->jsonify(0,0,2);
+    }
+    public function MainPage(){//need to define a getCommentsNum function in testService
+        $data['cats']=$this->test->cats();
+        $data['slide_main']=$this->test->Slides();
+        $data['most_viewed']=$this->test->TopNewPosts();
+        $data['new_posts']=$this->test->NewPosts();
+        for ($i=0;$i<count($data['most_viewed']);$i++){
+            $data['most_viewed'][$i]['comments']=$this->test->getCommentsNum($data['most_viewed'][$i]['post_id']);
+        }
+        return $this->jsonify(1,$data,0);
+    }
+    /////list of local functions
     protected function jsonify($stat=0,$data=0,$errNo=null){
         //a function to create better structured json response
-        $err= app('ErrorGen');
+        $err= app('ErrorGen');//this will load the class in the services foler in App directory named ErrorGenerator
         return $err->errorMaker($stat,$data,$errNo);
 
     }

@@ -23,8 +23,11 @@ Route::get('/post/test','Test@test');
 Route::get('/post/view','Test@index');
 Route::get('/post/like','Test@like');
 Route::get('/post/unlike','Test@disLike');
+Route::get('/post/Search','Test@Search');
 Route::get('/post/cats','Test@cats');
 Route::get('/post/Get_comment','Test@getComments');
 Route::get('/post/Add_comment','Test@addComment');
+Route::get('/post/TopNewPosts','Test@TopNewPosts');
+Route::get('/post/Main','Test@MainPage');
 ///how the fk should i add parameters to it :|
 //
