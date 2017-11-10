@@ -147,6 +147,7 @@ class Test extends Controller
         }
         return $this->jsonify(1,$data,0);
     }
+
     /////list of local functions
     protected function jsonify($stat=0,$data=0,$errNo=null){
         //a function to create better structured json response

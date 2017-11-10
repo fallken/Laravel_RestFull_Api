@@ -29,5 +29,15 @@ Route::get('/post/Get_comment','Test@getComments');
 Route::get('/post/Add_comment','Test@addComment');
 Route::get('/post/TopNewPosts','Test@TopNewPosts');
 Route::get('/post/Main','Test@MainPage');
+/////user routing section
+Route::get('/user/test','User@test');
+Route::get('/user/Register','User@Register');
+Route::get('/user/login','User@Login');
+Route::get('/user/details','User@Details');
+Route::get('/user/logout','User@LogOut');
+Route::get('/user/forgotpw','User@ForgetPassword');
+Route::get('/user/forgotpwprocess','User@ForgetPasswordProcess');
+////email section
+Route::get('/email','User@emailVerify');
 ///how the fk should i add parameters to it :|
 //

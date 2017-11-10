@@ -17,5 +17,5 @@ class Activation extends Model
      * @var array
      */
     protected $fillable = ['user_id', 'type', 'code', 'activated'];
-
+    public $timestamps=false;
 }

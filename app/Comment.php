@@ -20,7 +20,7 @@ class Comment extends Model
      * @var array
      */
     protected $fillable = ['user_id', 'status', 'post_id', 'comment_body', 'date', 'answer', 'target_id'];
-
+    public $timestamps=false;
     public function post(){
         return $this->belongsTo('App\Post','post_id','id');//the second argument is the local and the second is foreign i stil wonder if
         //it is the same on hasMany relationship or not
