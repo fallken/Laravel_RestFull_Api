@@ -90,14 +90,17 @@ class Test extends Controller
         $parms=[];
         $parms=request()->input();
         $targetId=isset($parms['target_id'])?$parms['target_id']:0;
-        $data=$this->test->addComment($parms['user_id'],$parms['post_id'],$parms['comment_body'],$targetId);
+        $user_id=$this->test->getUserFromToken($parms['token']);
+        $data=$this->test->addComment($parms['token'],$parms['post_id'],$parms['comment_body'],$targetId);
         if ($data){
+            $this->push($parms['target_id'],$parms['comment_body'],$user_id);
             $this->jsonify(1,$data,0);
         }
         else{
             $this->jsonify(0,0,3);
         }
-}
+    }
+
     public function Search(){//i think i should be using ordinary strucrured data errors like the one used on
         //need to create another service container for handling errors and requests
         ///or ill pass the data and the error name to jsonifier and then the jsonifier will use the sevice container to get the error data and the will retun the error structure to me
@@ -153,6 +156,54 @@ class Test extends Controller
         //a function to create better structured json response
         $err= app('ErrorGen');//this will load the class in the services foler in App directory named ErrorGenerator
         return $err->errorMaker($stat,$data,$errNo);
+
+    }
+    ///adding my custome pushing function
+    private function push($targetId , $commentBody, $senderId){
+        $userId= $this->test->getUserIdFromCommentId($targetId);
+        $senderName=$this->test->getUser($senderId);
+        $image='';
+        if ($senderName->pic != 'default'):
+            $image = 'http://hifitapp.ir/aaaa/p/'.$senderName->pic;
+        else:
+            $image='http://hifitapp.ir/aaaa/p/default.png';
+        endif;
+
+        $content = array(
+            "en" => base64_decode($commentBody)
+        );
+        $heading=array(
+            "en"=> $senderName->name
+        );
+        $fields = array(
+            'app_id' => "fe76a49c-c607-47f8-b986-c44bffe9fa2d",
+            "filters"=> [
+                [ "field"=> "tag", "key"=> "user_id", "relation"=> "=", "value"=> $userId]
+            ],
+            'large_icon'=>$image,//for image i wonder if i should use responders image or a  default image . i wonder
+            'contents' => $content,
+            'small_icon'=>'http://hifitapp.ir/images/hifitapp.png',
+            'headings'=>$heading
+        );
+
+        $fields = json_encode($fields);
+        print("\nJSON sent:\n");
+        print($fields);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic ZGRiNmZjNGEtNGQyNS00Y2NiLWI5YjgtN2ExNzA0YzI5Mzhm'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return $response;
+
 
     }
 

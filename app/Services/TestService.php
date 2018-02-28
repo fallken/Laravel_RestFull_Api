@@ -116,6 +116,18 @@ class TestService{
         $comments=Comment::where('post_id',$postId)->count();
         return $comments;
     }
+    public function getUserFromToken($token){
+        $tokenId= Token::where('token',$token)->first();
+        return $tokenId->user_id;
+    }
+    public function getUserIdFromCommentId($commentId){
+        $comment = Comment::where('id',$commentId)->get();
+        return $comment->user_id;
+    }
+    public function getUser($senderId){
+        $user = User::where('id',$senderId)->get();
+        return $user;
+    }
 
     /////protected functions
     protected function addView($id){//shoud set timestaps false if u dont want to have timestamps  errors
@@ -175,10 +187,7 @@ class TestService{
 
             return $data;
         }
-    protected function getUserFromToken($token){
-       $tokenId= Token::where('token',$token)->first();
-        return $tokenId->user_id;
-    }
+
     protected function filterSlides($slides){
         $data=[];
             foreach ($slides as $slide){
