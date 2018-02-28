@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\OtherService;
 use App\Services\TestService;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +32,9 @@ class TestProvider extends ServiceProvider
         $this->app->bind('ErrorGen','App\Services\ErrorGenerator');
         $this->app->bind(UserService::class,function ($app){
             return new UserService();
+        });
+        $this->app->bind(OtherService::class,function ($app){
+            return new OtherService();
         });
     }
 }

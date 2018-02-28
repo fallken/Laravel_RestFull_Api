@@ -22,4 +22,8 @@ class PostCat extends Model
     public function posts(){
         return $this->hasMany('App\Post','cat_id');
     }
+    public function getIdAttribute($value){
+        return (string)$value;
+
+    }
 }

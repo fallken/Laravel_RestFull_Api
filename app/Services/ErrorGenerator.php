@@ -45,7 +45,9 @@ public function errorMaker($stat,$data,$errNo){//craeting typical error structur
         if (is_numeric($data)&&$data==0){
             return response()->json(['ok'=>true,"result"=>["code"=>$errNo,"text"=>$this->errorList[$errNo]]]);
         }
+
         return response()->json(['ok'=>true,"result"=>[$data]]);
+
     }
     else{
         return response()->json(['ok'=>false,"error"=>["code"=>$this->errorList[7]]]);

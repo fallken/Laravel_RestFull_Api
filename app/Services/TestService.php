@@ -73,17 +73,17 @@ class TestService{
     }
     public function TopNewPosts($catId=null){//i will have to make sure its working correctly . well in my tests it seems to be working like charm
         if (!is_null($catId)){
-            $posts=Post::where('posts.cat_id',$catId)->where('posts.time','>',time()-604800)->join('post_cats','posts.cat_id','=','post_cats.id')
-                ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.views','posts.likes','posts.img as post_img',
+            $posts=$this->getCommentsForTopNewPosts(Post::where('posts.cat_id',$catId)->where('posts.time','>',time()-604800)->join('post_cats','posts.cat_id','=','post_cats.id')
+                ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.time','posts.views','posts.likes','posts.img as post_img',
                     'post_cats.img as cat_img','post_cats.name as cat_name')
                 ->orderBy('views','desc')->limit(10)
-                ->get();
+                ->get());
         }else{
-            $posts=Post::where('posts.time','>',time()-9072000)->join('post_cats','posts.cat_id','=','post_cats.id')
-                ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.views','posts.likes','posts.img as post_img',
+            $posts=$this->getCommentsForTopNewPosts(Post::where('posts.time','>',time()-9072000)->join('post_cats','posts.cat_id','=','post_cats.id')
+                ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.time','posts.views','posts.likes','posts.img as post_img',
                     'post_cats.img as cat_img','post_cats.name as cat_name')
                 ->orderBy('views','desc')->limit(10)
-                ->get();
+                ->get());
         }
 
         return $posts;
@@ -103,12 +103,14 @@ class TestService{
            return $result;
     }
     public function NewPosts($catId=null){
-        if (!is_null($catId)){
-        $posts=$this->filterPosts(Post::where('posts.cat_id',$catId)->orderBy('time','desc')->take(10)->get(),1);
-        }else{
-            $posts=$this->filterPosts(Post::orderBy('time','desc')->take(10)->get(),1);
+        $data = $this->cats();
+        $info=[];
+        $entry = [];
+        foreach ($data as $cat){
+            $entry[ $cat->id]= $this->filterPosts(Post::where('posts.cat_id',$cat->id)->orderBy('time','desc')->take(10)->get(),1);
+            $info=$entry;
         }
-        return $posts;
+        return $info;
     }
     public function getCommentsNum($postId){
         $comments=Comment::where('post_id',$postId)->count();
@@ -126,9 +128,13 @@ class TestService{
         foreach ($resultS as $result){
             $entry=[
                 'id'=>$result->id,
+                'img'=>$result->img,
                 'title'=>trim($result->title),
+                'cat_id'=>$result->cat_id,
+                'time'=>$result->time,
                 'views'=>$result->views,
-                'commentNum'=>$this->getCommentsNum($result->id)
+                'likes'=>$result->likes,
+                'comments'=>(string)$this->getCommentsNum($result->id)
             ];
             if ($stat==0){
             $entry['comments']=$this->filterComments(Post::find($result->id)->comments->take(5));
@@ -136,6 +142,11 @@ class TestService{
             $data[]=$entry;
         }
         return $data;
+    }
+    protected function getCommentsForTopNewPosts($results){
+        foreach ($results as $result):
+                $result['comments']=(string)$this->getCommentsNum($result->post_id);
+        endforeach;
     }
     protected function filterComments($comments)
     {
@@ -181,6 +192,7 @@ class TestService{
             }
             return $data;
     }
+
 
 
 }

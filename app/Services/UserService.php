@@ -148,7 +148,14 @@ public function isValidToken($token){
     if (count($userToken)!=1)
         return false;
     else
-        return true;
+        return $userToken->user_id;
+}
+public function getUserInfo($userId){
+    $user=User::where('id',$userId)->first();
+    if (count($user)!=1)
+        return false;
+    else
+        return $user;
 }
 public function deleteToken($token){
     $userToken=Token::where('token',$token)->delete();
@@ -392,7 +399,13 @@ public function updateNewPassword($userId,$newPass){
     else
         return false;
 }
-
+public function updateUserInfo($info,$userId){
+    $update=User::where('id',$userId)->update($info);
+    if ($update)
+        return true;
+    else
+        return false;
+}
 
 
 protected function insertToken($token,$userId,$time){

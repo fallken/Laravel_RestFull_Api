@@ -18,26 +18,29 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 ////TEST
-Route::get('/post/test','Test@test');
+Route::get('/Post/test','v1\Test@test');
 /////
-Route::get('/post/view','Test@index');
-Route::get('/post/like','Test@like');
-Route::get('/post/unlike','Test@disLike');
-Route::get('/post/Search','Test@Search');
-Route::get('/post/cats','Test@cats');
-Route::get('/post/Get_comment','Test@getComments');
-Route::get('/post/Add_comment','Test@addComment');
-Route::get('/post/TopNewPosts','Test@TopNewPosts');
-Route::get('/post/Main','Test@MainPage');
+Route::get('/Post/view','v1\Test@index');
+Route::get('/Post/like','v1\Test@like');
+Route::get('/Post/unlike','v1\Test@disLike');
+Route::get('/Post/Search','v1\Test@Search');
+Route::get('/Post/cats','v1\Test@cats');
+Route::get('/Post/Get_comment','v1\Test@getComments');
+Route::get('/Post/Add_comment','v1\Test@addComment');
+Route::get('/Post/TopNewPosts','v1\Test@TopNewPosts');
+Route::get('/Post/Main','v1\Test@MainPage');
 /////user routing section
-Route::get('/user/test','User@test');
-Route::get('/user/Register','User@Register');
-Route::get('/user/login','User@Login');
-Route::get('/user/details','User@Details');
-Route::get('/user/logout','User@LogOut');
-Route::get('/user/forgotpw','User@ForgetPassword');
-Route::get('/user/forgotpwprocess','User@ForgetPasswordProcess');
+Route::get('/User/test','v1\User@test');
+Route::get('/User/Register','v1\User@Register');
+Route::get('/User/login','v1\User@Login');
+Route::get('/User/details','v1\User@Details');
+Route::get('/User/logout','v1\User@LogOut');
+Route::get('/User/forgotpw','v1\User@ForgetPassword');
+Route::get('/User/forgotpwprocess','v1\User@ForgetPasswordProcess');
+Route::get('/User/updateUser','v1\User@editProfile');
+Route::get('/User/changePass','v1\User@changePassword');
+Route::get('/Other/reportBug','v1\Other@sendBug');
 ////email section
-Route::get('/email','User@emailVerify');
+Route::get('/Email','v1\User@emailVerify');
 ///how the fk should i add parameters to it :|
 //

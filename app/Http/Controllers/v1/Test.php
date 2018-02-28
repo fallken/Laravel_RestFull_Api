@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\v1;
 
 use App\Services\TestService;
 use App\Token;
@@ -8,6 +8,10 @@ use App\User;
 use App\Post;
 use Hamcrest\Thingy;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+
+
 
 class Test extends Controller
 {
@@ -17,7 +21,6 @@ class Test extends Controller
     public function __construct(TestService $service)
     {
         $this->test=$service;
-
     }
 
     public function index(){
@@ -42,7 +45,7 @@ class Test extends Controller
         else {
             return $this->jsonify(0,0,3);
         }
-
+    
     }
     public function disLike(){
 
@@ -67,10 +70,7 @@ class Test extends Controller
 
     }
     public function test(){
-        $parms=request()->input();
-        $postId=$parms['postId'];
-        return response()->json($this->test->getCommentsNum($postId));
-
+       var_dump($this->ConvertArrayToString($this->test->cats())) ;
     }
     public function getComments(){//ill work on its security later not now . for now i will just define the functions and take tests from them
 
