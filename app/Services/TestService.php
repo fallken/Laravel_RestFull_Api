@@ -73,13 +73,13 @@ class TestService{
     }
     public function TopNewPosts($catId=null){//i will have to make sure its working correctly . well in my tests it seems to be working like charm
         if (!is_null($catId)){
-            $posts=$this->getCommentsForTopNewPosts(Post::where('posts.cat_id',$catId)->where('posts.time','>',time()-604800)->join('post_cats','posts.cat_id','=','post_cats.id')
+            $posts=$this->filterPosts(Post::where('posts.cat_id',$catId)->where('posts.time','>',time()-604800)->join('post_cats','posts.cat_id','=','post_cats.id')
                 ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.time','posts.views','posts.likes','posts.img as post_img',
                     'post_cats.img as cat_img','post_cats.name as cat_name')
                 ->orderBy('views','desc')->limit(10)
                 ->get());
         }else{
-            $posts=$this->getCommentsForTopNewPosts(Post::where('posts.time','>',time()-9072000)->join('post_cats','posts.cat_id','=','post_cats.id')
+            $posts=$this->filterPosts(Post::where('posts.time','>',time()-9072000)->join('post_cats','posts.cat_id','=','post_cats.id')
                 ->select('posts.id as post_id','posts.title','posts.time','posts.cat_id','posts.time','posts.views','posts.likes','posts.img as post_img',
                     'post_cats.img as cat_img','post_cats.name as cat_name')
                 ->orderBy('views','desc')->limit(10)
