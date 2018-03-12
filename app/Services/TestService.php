@@ -114,7 +114,7 @@ class TestService{
     }
     public function getCommentsNum($postId){
         $comments=Comment::where('post_id',$postId)->count();
-        return $comments;
+        return (string)$comments;
     }
     public function getUserFromToken($token){
         $tokenId= Token::where('token',$token)->first();

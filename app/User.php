@@ -33,4 +33,6 @@ class User extends Model
 public function tokens(){
     return $this->hasMany('App\Token');
 }
+
+
 }

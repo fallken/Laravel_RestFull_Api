@@ -135,9 +135,10 @@ public function login($username,$pass){
 
 }
 public function getUserFromToken($token){
-    $user=Token::where('token',$token)->where('activations.type','email')->join('users','tokens.user_id','=','users.id')->
+    $user=array(Token::where('token',$token)->where('activations.type','email')->join('users','tokens.user_id','=','users.id')->
             join('activations','tokens.user_id','=','activations.user_id')->select('tokens.user_id','users.username','users.email','users.tel'
-            ,'users.gender','users.age','users.height','users.weight','users.blood_type','users.pic','activations.activated as mail_activated')->first();
+            ,'users.gender','users.age','users.height','users.weight','users.blood_type','users.pic','activations.activated as mail_activated')->first());
+
         if (count($user)!=1)
             return false;
                 else

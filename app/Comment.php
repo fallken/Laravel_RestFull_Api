@@ -28,4 +28,17 @@ class Comment extends Model
     public function user(){
         return $this->belongsTo('App\User','user_id','id');
     }
+    public function getStatusAttribute($value){
+        return (string)$value;
+    }
+    public function getIdAttribute($value){
+        return (string)$value;
+    }
+    public function getTargetIdAttribute($value){
+        return (string)$value;
+    }
+    public function getUserIdAttribute($value){
+        return (string)$value;
+    }
+
 }

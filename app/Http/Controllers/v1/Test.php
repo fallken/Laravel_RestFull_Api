@@ -76,6 +76,7 @@ class Test extends Controller
 
             $parms=[];
             $parms=request()->input();
+            $parms['offset'] = empty($parms['offset'])?null:$parms['offset'];
             $data=$this->test->getComments($parms['id'],$parms['offset']);
             if ($data){
                 return $this->jsonify(1, $data, 0);
@@ -138,7 +139,7 @@ class Test extends Controller
         if ($posts){
             return $this->jsonify(1,$posts,0);
         }else
-            return $this->jsonify(0,0,2);
+            return $this->jsonify(0,0,22);
     }
     public function MainPage(){//need to define a getCommentsNum function in testService
         $data['cats']=$this->test->cats();

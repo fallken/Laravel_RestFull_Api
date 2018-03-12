@@ -33,24 +33,25 @@ class ErrorGenerator
         19=>'user logged out successfully',
         20=>'something went wrong deleting the user',
         21=>'token is not valid',
+        22=>'no data was recieved'
     ];
 public function errorMaker($stat,$data,$errNo){//craeting typical error structure to fullfil the needs of current api classes?
     if ($stat==0){
-    return response()->json(['ok'=>false , "error"=>["code"=>$errNo,"text"=>$this->errorList[$errNo]]]);
+    return response()->json(['ok'=>false , "error"=>["code"=>(string)$errNo,"text"=>$this->errorList[$errNo]]]);
     }
     if ($stat==2){
         return response()->json(['ok'=>false , "error"=>["text"=>$data]]);
     }
     elseif($stat==1){
         if (is_numeric($data)&&$data==0){
-            return response()->json(['ok'=>true,"result"=>["code"=>$errNo,"text"=>$this->errorList[$errNo]]]);
+            return response()->json(['ok'=>true,"result"=>["code"=>(string)$errNo,"text"=>$this->errorList[$errNo]]]);
         }
 
         return response()->json(['ok'=>true,"result"=>[$data]]);
 
     }
     else{
-        return response()->json(['ok'=>false,"error"=>["code"=>$this->errorList[7]]]);
+        return response()->json(['ok'=>false,"error"=>["code"=>(string)$this->errorList[7]]]);
     }
 }
 }
